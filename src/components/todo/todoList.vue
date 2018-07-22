@@ -2,14 +2,6 @@
   <div>
     <div class="container">
       <br>
-      <!--<div class="jumbotron">-->
-        <!--<h1>Bootstrap Tutorial</h1>-->
-        <!--<p>-->
-          <!--Bootstrap is the most popular HTML, CSS, and JS framework for developing-->
-          <!--responsive, mobile-first projects on the web.-->
-        <!--</p>-->
-      <!--</div>-->
-
       <div class="row">
         <div class="col-12">
           <form class="form" v-on:submit="addTodo">
@@ -30,7 +22,7 @@
           </div>
           <div class="form-check form-check-inline">
             <input class="form-check-input" type="radio" name="radio" id="inlineRadio2" v-on:click="filterTodos('completed')">
-            <label class="form-check-label" for="inlineRadio2">completed</label>
+            <label class="form-check-label" for="inlineRadio2">Completed</label>
           </div>
           <div class="form-check form-check-inline">
             <input class="form-check-input" type="radio" name="radio" id="inlineRadio3" v-on:click="filterTodos('incomplete')">
@@ -78,28 +70,28 @@
 </template>
 
 <script>
-  var STORAGE_KEY = 'vue-js-todo-P7oZi9sL';
+  var STORAGE_KEY = 'bs-vue-todo-app-1234';
   var todoStorage = {
     fetch: function () {
       return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
     },
-    save: function (todos) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
+    save: function (todo) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(todo));
     }
   };
 
 
   var filters = {
-    all: function (todos) {
-      return todos;
+    all: function (todoList) {
+      return todoList;
     },
-    completed: function (todos) {
-      return todos.filter(function (todo) {
+    completed: function (todoList) {
+      return todoList.filter(function (todo) {
         return todo.completed;
       });
     },
-    incomplete: function (todos) {
-      return todos.filter(function (todo) {
+    incomplete: function (todoList) {
+      return todoList.filter(function (todo) {
         return !todo.completed;
       });
     }
@@ -110,24 +102,23 @@
     data: function () {
       return {
         inputVal: '',
-        todos: todoStorage.fetch(),
+        todoList: todoStorage.fetch(),
         visibility: 'all'
       }
     },
     watch: {
-      todos: {
-        handler: function (todos) {
-          todoStorage.save(todos);
+      todoList: {
+        handler: function (todo) {
+          todoStorage.save(todo);
         }
       }
     },
     computed: {
       filteredTodos: function () {
-        console.log(this.visibility);
-        return filters[this.visibility](this.todos);
+        return filters[this.visibility](this.todoList);
       },
       completedPercentage: function () {
-        var per = (Math.floor((filters.completed(this.todos).length / this.todos.length) * 100));
+        var per = (Math.floor((filters.completed(this.todoList).length / this.todoList.length) * 100));
         if (isNaN(per)) {
           per = 0;
         }
@@ -137,8 +128,9 @@
     methods: {
       addTodo: function (e) {
         e.preventDefault();
+
         if (this.inputVal) {
-          this.todos.push({
+          this.todoList.push({
             text: this.inputVal,
             completed: false
           });
@@ -147,17 +139,16 @@
       },
       toggleTodo: function (todo) {
         todo.completed = !todo.completed;
-        console.log(todo.completed);
       },
       filterTodos: function (filter) {
         this.visibility = filter;
       },
       deleteTodo: function (index) {
-        this.todos.splice(index, 1);
+        this.todoList.splice(index, 1);
       },
       clearAll: function () {
         if (confirm('전체 삭제 하시겠습니까?')) {
-          this.todos = [];
+          this.todoList = [];
         }
       }
     }
